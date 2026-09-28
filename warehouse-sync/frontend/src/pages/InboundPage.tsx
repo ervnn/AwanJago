@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Plus, ArrowDownToLine, Loader2, X, Search } from 'lucide-react'
-import { inboundService, productService } from '../services/api'
-import { Inbound, Product } from '../types'
+import { inboundService, productService, supplierService } from '../services/api'
+import { Inbound, Product, Supplier } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 
@@ -16,10 +16,14 @@ export default function InboundPage() {
     productService.getAll().then(r => r.data ?? []), [])
   const { data: products } = useAsync<Product[]>(fetchProducts)
 
+  const fetchSuppliers = useCallback(() =>
+    supplierService.getAll().then(r => r.data ?? []), [])
+  const { data: suppliers } = useAsync<Supplier[]>(fetchSuppliers)
+
   const [modal, setModal] = useState(false)
   const [saving, setSaving] = useState(false)
   const [search, setSearch] = useState('')
-  const [form, setForm] = useState({ product_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
+  const [form, setForm] = useState({ product_id: '', supplier_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
 
   function showToast(type: 'success' | 'error', msg: string) {
@@ -31,18 +35,19 @@ export default function InboundPage() {
     e.preventDefault()
     if (!profile) return
     setSaving(true)
-    const { error } = await inboundService.create({ ...form, quantity: Number(form.quantity), user_id: profile.id })
+    const { error } = await inboundService.create({ ...form, supplier_id: form.supplier_id || undefined, quantity: Number(form.quantity), user_id: profile.id })
     setSaving(false)
     if (error) { showToast('error', error.message); return }
     setModal(false)
-    setForm({ product_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
+    setForm({ product_id: '', supplier_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
     refetch()
     showToast('success', 'Inbound berhasil dicatat!')
   }
 
   const filtered = (inbounds ?? []).filter(i =>
     (i.products?.name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-    (i.products?.sku ?? '').toLowerCase().includes(search.toLowerCase())
+    (i.products?.sku ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (i.suppliers?.supplier_name ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -93,6 +98,7 @@ export default function InboundPage() {
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Tanggal</th>
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">SKU</th>
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Nama Barang</th>
+                  <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Supplier</th>
                   <th className="text-right text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Qty</th>
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Dicatat Oleh</th>
                 </tr>
@@ -105,6 +111,7 @@ export default function InboundPage() {
                       <span className="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-lg">{i.products?.sku ?? '—'}</span>
                     </td>
                     <td className="px-6 py-4 text-white text-sm font-medium">{i.products?.name ?? '—'}</td>
+                    <td className="px-6 py-4 text-slate-300 text-sm">{i.suppliers?.supplier_name ?? '—'}</td>
                     <td className="px-6 py-4 text-right">
                       <span className="text-emerald-400 font-bold text-sm">+{i.quantity.toLocaleString('id-ID')}</span>
                     </td>
@@ -139,6 +146,20 @@ export default function InboundPage() {
                   <option value="" className="bg-slate-800">Pilih barang...</option>
                   {(products ?? []).map(p => (
                     <option key={p.id} value={p.id} className="bg-slate-800">{p.name} ({p.sku})</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Supplier</label>
+                <select
+                  id="select-supplier-inbound"
+                  value={form.supplier_id}
+                  onChange={e => setForm(p => ({ ...p, supplier_id: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm appearance-none"
+                >
+                  <option value="" className="bg-slate-800">Tanpa Supplier</option>
+                  {(suppliers ?? []).map(s => (
+                    <option key={s.id} value={s.id} className="bg-slate-800">{s.supplier_name}</option>
                   ))}
                 </select>
               </div>

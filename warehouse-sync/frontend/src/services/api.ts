@@ -35,12 +35,12 @@ export const inboundService = {
   async getAll() {
     const { data, error } = await supabase
       .from('inbounds')
-      .select('*, products(name, sku), profiles(name)')
+      .select('*, products(name, sku), profiles(name), suppliers(supplier_name)')
       .order('created_at', { ascending: false })
     return { data, error }
   },
 
-  async create(inbound: { product_id: string; quantity: number; date: string; user_id: string }) {
+  async create(inbound: { product_id: string; quantity: number; date: string; user_id: string; supplier_id?: string }) {
     const { data, error } = await supabase.from('inbounds').insert(inbound).select().single()
     return { data, error }
   },
@@ -50,12 +50,12 @@ export const outboundService = {
   async getAll() {
     const { data, error } = await supabase
       .from('outbounds')
-      .select('*, products(name, sku), profiles(name)')
+      .select('*, products(name, sku), profiles(name), suppliers(supplier_name)')
       .order('created_at', { ascending: false })
     return { data, error }
   },
 
-  async create(outbound: { product_id: string; quantity: number; date: string; user_id: string }) {
+  async create(outbound: { product_id: string; quantity: number; date: string; user_id: string; supplier_id?: string }) {
     const { data, error } = await supabase.from('outbounds').insert(outbound).select().single()
     return { data, error }
   },

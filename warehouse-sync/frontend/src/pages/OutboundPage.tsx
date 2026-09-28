@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Plus, ArrowUpFromLine, Loader2, X, Search } from 'lucide-react'
-import { outboundService, productService } from '../services/api'
-import { Outbound, Product } from '../types'
+import { outboundService, productService, supplierService } from '../services/api'
+import { Outbound, Product, Supplier } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 
@@ -16,10 +16,14 @@ export default function OutboundPage() {
     productService.getAll().then(r => r.data ?? []), [])
   const { data: products } = useAsync<Product[]>(fetchProducts)
 
+  const fetchSuppliers = useCallback(() =>
+    supplierService.getAll().then(r => r.data ?? []), [])
+  const { data: suppliers } = useAsync<Supplier[]>(fetchSuppliers)
+
   const [modal, setModal] = useState(false)
   const [saving, setSaving] = useState(false)
   const [search, setSearch] = useState('')
-  const [form, setForm] = useState({ product_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
+  const [form, setForm] = useState({ product_id: '', supplier_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
 
   const selectedProduct = (products ?? []).find(p => p.id === form.product_id)
@@ -41,7 +45,7 @@ export default function OutboundPage() {
     }
 
     setSaving(true)
-    const { error } = await outboundService.create({ ...form, quantity: qty, user_id: profile.id })
+    const { error } = await outboundService.create({ ...form, supplier_id: form.supplier_id || undefined, quantity: qty, user_id: profile.id })
     setSaving(false)
 
     if (error) {
@@ -53,14 +57,15 @@ export default function OutboundPage() {
     }
 
     setModal(false)
-    setForm({ product_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
+    setForm({ product_id: '', supplier_id: '', quantity: 1, date: new Date().toISOString().split('T')[0] })
     refetch()
     showToast('success', 'Outbound berhasil dicatat!')
   }
 
   const filtered = (outbounds ?? []).filter(o =>
     (o.products?.name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-    (o.products?.sku ?? '').toLowerCase().includes(search.toLowerCase())
+    (o.products?.sku ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (o.suppliers?.supplier_name ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -111,6 +116,7 @@ export default function OutboundPage() {
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Tanggal</th>
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">SKU</th>
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Nama Barang</th>
+                  <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Supplier/Klien</th>
                   <th className="text-right text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Qty</th>
                   <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Dicatat Oleh</th>
                 </tr>
@@ -123,6 +129,7 @@ export default function OutboundPage() {
                       <span className="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-lg">{o.products?.sku ?? '—'}</span>
                     </td>
                     <td className="px-6 py-4 text-white text-sm font-medium">{o.products?.name ?? '—'}</td>
+                    <td className="px-6 py-4 text-slate-300 text-sm">{o.suppliers?.supplier_name ?? '—'}</td>
                     <td className="px-6 py-4 text-right">
                       <span className="text-amber-400 font-bold text-sm">-{o.quantity.toLocaleString('id-ID')}</span>
                     </td>
@@ -166,6 +173,20 @@ export default function OutboundPage() {
                     Stock tersedia: <span className={`font-semibold ${selectedProduct.stock === 0 ? 'text-red-400' : 'text-emerald-400'}`}>{selectedProduct.stock}</span>
                   </p>
                 )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Supplier / Klien</label>
+                <select
+                  id="select-supplier-outbound"
+                  value={form.supplier_id}
+                  onChange={e => setForm(p => ({ ...p, supplier_id: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm appearance-none"
+                >
+                  <option value="" className="bg-slate-800">Tanpa Supplier</option>
+                  {(suppliers ?? []).map(s => (
+                    <option key={s.id} value={s.id} className="bg-slate-800">{s.supplier_name}</option>
+                  ))}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

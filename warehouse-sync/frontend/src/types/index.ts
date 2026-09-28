@@ -24,9 +24,11 @@ export interface Inbound {
   quantity: number
   date: string
   user_id: string
+  supplier_id?: string
   created_at: string
   products?: Pick<Product, 'name' | 'sku'>
   profiles?: Pick<Profile, 'name'>
+  suppliers?: Pick<Supplier, 'supplier_name'>
 }
 
 export interface Outbound {
@@ -35,9 +37,11 @@ export interface Outbound {
   quantity: number
   date: string
   user_id: string
+  supplier_id?: string
   created_at: string
   products?: Pick<Product, 'name' | 'sku'>
   profiles?: Pick<Profile, 'name'>
+  suppliers?: Pick<Supplier, 'supplier_name'>
 }
 
 export interface DashboardStats {
