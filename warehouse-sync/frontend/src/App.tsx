@@ -5,6 +5,7 @@ import AppLayout from './layouts/AppLayout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import BarangPage from './pages/BarangPage'
+import SupplierPage from './pages/SupplierPage'
 import InboundPage from './pages/InboundPage'
 import OutboundPage from './pages/OutboundPage'
 
@@ -23,6 +24,7 @@ export default function App() {
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/barang" element={<BarangPage />} />
+                    <Route path="/supplier" element={<SupplierPage />} />
                     <Route path="/inbound" element={<InboundPage />} />
                     <Route path="/outbound" element={<OutboundPage />} />
                   </Routes>

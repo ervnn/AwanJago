@@ -46,3 +46,13 @@ export interface DashboardStats {
   totalInbound: number
   totalOutbound: number
 }
+
+export interface Supplier {
+  id: string
+  supplier_name: string
+  pic_name: string
+  contact: string
+  product_name: string
+  created_at: string
+  updated_at: string
+}

@@ -9,12 +9,14 @@ import {
   Package2,
   X,
   Menu,
+  Users,
 } from 'lucide-react'
 import { useState } from 'react'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/barang', label: 'Barang', icon: Package },
+  { to: '/supplier', label: 'Supplier', icon: Users },
   { to: '/inbound', label: 'Inbound', icon: ArrowDownToLine },
   { to: '/outbound', label: 'Outbound', icon: ArrowUpFromLine },
 ]

@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import { Product } from '../types'
+import { Product, Supplier } from '../types'
 
 export const productService = {
   async getAll() {
@@ -58,6 +58,36 @@ export const outboundService = {
   async create(outbound: { product_id: string; quantity: number; date: string; user_id: string }) {
     const { data, error } = await supabase.from('outbounds').insert(outbound).select().single()
     return { data, error }
+  },
+}
+
+export const supplierService = {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('suppliers')
+      .select('*')
+      .order('created_at', { ascending: false })
+    return { data, error }
+  },
+
+  async create(supplier: Omit<Supplier, 'id' | 'created_at' | 'updated_at'>) {
+    const { data, error } = await supabase.from('suppliers').insert(supplier).select().single()
+    return { data, error }
+  },
+
+  async update(id: string, supplier: Partial<Omit<Supplier, 'id' | 'created_at' | 'updated_at'>>) {
+    const { data, error } = await supabase
+      .from('suppliers')
+      .update({ ...supplier, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+    return { data, error }
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase.from('suppliers').delete().eq('id', id)
+    return { error }
   },
 }
 
