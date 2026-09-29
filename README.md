@@ -4,6 +4,48 @@ Aplikasi manajemen gudang berbasis web dengan arsitektur **React + Supabase**. M
 
 ---
 
+## 💡 Business Model
+
+WarehouseSync mengelola alur barang dari **Supplier → Gudang → Klien** secara terpusat.
+
+```
+SUPPLIER
+   │
+   │  Mengirim barang ke gudang
+   ▼
+[INBOUND]  →  Stok Barang Bertambah
+   │
+   │  Barang tersimpan di gudang
+   ▼
+[GUDANG / STOK]
+   │
+   │  Barang dikirim ke klien/pemesan
+   ▼
+[OUTBOUND]  →  Stok Barang Berkurang
+   │
+   ▼
+KLIEN
+```
+
+### Alur Lengkap
+
+1. **Master Data** — Admin menginput data Barang, Supplier, dan Klien terlebih dahulu.
+2. **Inbound** — Saat barang datang dari Supplier, staff mencatat transaksi Inbound (pilih barang, supplier, qty, tanggal). Stok otomatis **bertambah**.
+3. **Stok Terpantau** — Dashboard menampilkan total stok, total barang, dan grafik tren bulanan secara real-time.
+4. **Outbound** — Saat barang keluar ke Klien, staff mencatat transaksi Outbound (pilih barang, klien, qty, tanggal). Stok otomatis **berkurang**.
+5. **Validasi** — Sistem menolak Outbound jika qty melebihi stok yang tersedia (dicek di sisi client & server via SQL trigger).
+
+### Aktor
+
+| Aktor       | Peran                                                                 |
+|-------------|-----------------------------------------------------------------------|
+| **Admin**   | Kelola master data (Barang, Supplier, Klien) + catat transaksi        |
+| **Staff**   | Catat transaksi Inbound & Outbound (tidak bisa ubah master data)      |
+| **Supplier**| Pihak yang mengirim barang masuk ke gudang (dicatat di Inbound)       |
+| **Klien**   | Pihak yang menerima/membeli barang dari gudang (dicatat di Outbound)  |
+
+---
+
 ## 🔗 Links
 
 | | |
