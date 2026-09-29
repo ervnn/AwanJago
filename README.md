@@ -20,10 +20,10 @@ Aplikasi manajemen gudang berbasis web dengan arsitektur **React + Supabase**. M
 - **Password:** Gudang123!@#
 
 ### Test Accounts
-| Role  | Email              | Password    |
-|-------|--------------------|-------------|
-| Admin | admin@test.com     | password123 |
-| Staff | staff@test.com     | password123 |
+| Role  | Email                | Password  |
+|-------|----------------------|-----------|
+| Admin | paijo@test.com       | qwerty123 |
+| Staff | miswanto@test.com    | qwerty123 |
 
 ---
 
