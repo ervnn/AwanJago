@@ -10,6 +10,7 @@ import {
   X,
   Menu,
   Users,
+  Building2,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -17,6 +18,7 @@ const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/barang', label: 'Barang', icon: Package },
   { to: '/supplier', label: 'Supplier', icon: Users },
+  { to: '/klien', label: 'Klien', icon: Building2 },
   { to: '/inbound', label: 'Inbound', icon: ArrowDownToLine },
   { to: '/outbound', label: 'Outbound', icon: ArrowUpFromLine },
 ]

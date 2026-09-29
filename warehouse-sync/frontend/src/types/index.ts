@@ -38,10 +38,12 @@ export interface Outbound {
   date: string
   user_id: string
   supplier_id?: string
+  client_id?: string
   created_at: string
   products?: Pick<Product, 'name' | 'sku'>
   profiles?: Pick<Profile, 'name'>
   suppliers?: Pick<Supplier, 'supplier_name'>
+  clients?: Pick<Client, 'client_name'>
 }
 
 export interface DashboardStats {
@@ -57,6 +59,15 @@ export interface Supplier {
   pic_name: string
   contact: string
   product_name: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Client {
+  id: string
+  client_name: string
+  pic_name: string
+  contact: string
   created_at: string
   updated_at: string
 }

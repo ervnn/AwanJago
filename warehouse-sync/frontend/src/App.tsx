@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import BarangPage from './pages/BarangPage'
 import SupplierPage from './pages/SupplierPage'
+import ClientPage from './pages/ClientPage'
 import InboundPage from './pages/InboundPage'
 import OutboundPage from './pages/OutboundPage'
 
@@ -25,6 +26,7 @@ export default function App() {
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/barang" element={<BarangPage />} />
                     <Route path="/supplier" element={<SupplierPage />} />
+                    <Route path="/klien" element={<ClientPage />} />
                     <Route path="/inbound" element={<InboundPage />} />
                     <Route path="/outbound" element={<OutboundPage />} />
                   </Routes>

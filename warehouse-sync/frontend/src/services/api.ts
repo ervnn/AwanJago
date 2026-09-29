@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import { Product, Supplier } from '../types'
+import { Product, Supplier, Client } from '../types'
 
 export const productService = {
   async getAll() {
@@ -50,14 +50,44 @@ export const outboundService = {
   async getAll() {
     const { data, error } = await supabase
       .from('outbounds')
-      .select('*, products(name, sku), profiles(name), suppliers(supplier_name)')
+      .select('*, products(name, sku), profiles(name), clients(client_name)')
       .order('created_at', { ascending: false })
     return { data, error }
   },
 
-  async create(outbound: { product_id: string; quantity: number; date: string; user_id: string; supplier_id?: string }) {
+  async create(outbound: { product_id: string; quantity: number; date: string; user_id: string; client_id?: string }) {
     const { data, error } = await supabase.from('outbounds').insert(outbound).select().single()
     return { data, error }
+  },
+}
+
+export const clientService = {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('clients')
+      .select('*')
+      .order('created_at', { ascending: false })
+    return { data, error }
+  },
+
+  async create(client: Omit<Client, 'id' | 'created_at' | 'updated_at'>) {
+    const { data, error } = await supabase.from('clients').insert(client).select().single()
+    return { data, error }
+  },
+
+  async update(id: string, client: Partial<Omit<Client, 'id' | 'created_at' | 'updated_at'>>) {
+    const { data, error } = await supabase
+      .from('clients')
+      .update({ ...client, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+    return { data, error }
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase.from('clients').delete().eq('id', id)
+    return { error }
   },
 }
 
